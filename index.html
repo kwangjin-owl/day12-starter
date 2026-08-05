@@ -116,7 +116,7 @@
     padding: 6px 4px;
     font-size: 10px;
     font-weight: 600;
-    border: 1px solid var(--line);
+    border: 2px solid var(--line);
     background: white;
     color: var(--ink);
     border-radius: 6px;
@@ -131,6 +131,8 @@
   .variant-btn[data-variant="HOT"]:hover,
   .variant-btn[data-variant=""]:hover {
     background: #fdd5b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(221, 123, 53, 0.2);
   }
   .variant-btn[data-variant="ICE"],
   .variant-btn[data-variant="COLD"] {
@@ -140,6 +142,8 @@
   .variant-btn[data-variant="ICE"]:hover,
   .variant-btn[data-variant="COLD"]:hover {
     background: #b8ddef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 157, 204, 0.2);
   }
   .variant-btn.active[data-variant="HOT"],
   .variant-btn.active[data-variant=""] {
@@ -203,14 +207,36 @@
     flex-direction: column;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   }
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
   .cart-title {
     font-size: 18px;
     font-weight: 700;
-    margin-bottom: 16px;
     background: linear-gradient(135deg, var(--orange), #e89051);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    margin: 0;
+  }
+  .cart-toggle {
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cart-toggle:hover {
+    background: rgba(37, 115, 87, 0.08);
+    border-color: var(--green);
+    color: var(--green);
   }
   .cart-items {
     flex: 1;
@@ -714,20 +740,27 @@
   body.force-mobile .qty-display {
     font-size: 12px;
   }
+  body.force-mobile .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
   body.force-mobile .cart-toggle {
-    display: block;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 50px;
-    background: linear-gradient(135deg, var(--orange), #e89051);
-    color: white;
-    border: none;
-    font-size: 13px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
     font-weight: 600;
+    color: var(--muted);
     cursor: pointer;
-    z-index: 101;
+    transition: all 0.2s;
+  }
+  body.force-mobile .cart-toggle:hover {
+    background: rgba(37, 115, 87, 0.08);
+    border-color: var(--green);
+    color: var(--green);
   }
   body.force-mobile .cart-panel {
     position: fixed;
@@ -824,29 +857,27 @@
       max-height: none;
       overflow-y: visible;
     }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
     .cart-toggle {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 50px;
-      background: linear-gradient(135deg, var(--orange), #e89051);
-      color: white;
-      border: none;
-      font-size: 13px;
+      background: transparent;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
       font-weight: 600;
+      color: var(--muted);
       cursor: pointer;
-      z-index: 101;
-      display: none;
       transition: all 0.2s;
     }
     .cart-toggle:hover {
-      opacity: 0.9;
-    }
-    @media (max-width: 768px) {
-      .cart-toggle {
-        display: block;
-      }
+      background: rgba(37, 115, 87, 0.08);
+      border-color: var(--green);
+      color: var(--green);
     }
     .cart-panel {
       position: fixed;
@@ -990,9 +1021,11 @@
 
   <!-- 장바구니 -->
   <div>
-    <button class="cart-toggle" id="cart-toggle" onclick="toggleCart()">🛒 주문 숨기기</button>
     <div class="cart-panel">
-      <div class="cart-title">🛒 주문</div>
+      <div class="cart-header">
+        <div class="cart-title">🛒 주문</div>
+        <button class="cart-toggle" id="cart-toggle" onclick="toggleCart()">숨기기</button>
+      </div>
       <div class="cart-items" id="cart-items">
         <div class="cart-empty">비어있습니다</div>
       </div>
