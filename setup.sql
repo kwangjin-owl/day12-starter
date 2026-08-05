@@ -26,3 +26,20 @@ create policy "anon select" on applications
 -- 참고: 나중에 새 질문(칸)을 추가할 때는 not null을 붙이지 않습니다.
 --   좋은 예: alter table applications add column mood text;
 --   피할 예: alter table applications add column mood text not null;  <- 빈 값이 오면 제출이 실패(500)합니다
+
+-- [4] Day13 커피 자판기: 판매 데이터 표
+create table if not exists sales (
+  id bigint generated always as identity primary key,
+  buyer_name text not null,
+  product text not null,
+  quantity integer not null,
+  price_per_unit integer not null,
+  total_price integer not null,
+  purchased_at timestamptz not null default now()
+);
+alter table sales enable row level security;
+
+-- 판매 표 읽기 정책: 익명 사용자도 읽을 수 있게 (관리자 화면용)
+drop policy if exists "anon select sales" on sales;
+create policy "anon select sales" on sales
+  for select to anon using (true);
