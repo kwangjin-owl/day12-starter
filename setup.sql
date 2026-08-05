@@ -43,3 +43,8 @@ alter table sales enable row level security;
 drop policy if exists "anon select sales" on sales;
 create policy "anon select sales" on sales
   for select to anon using (true);
+
+-- 판매 표 넣기 정책: 익명 사용자도 주문 저장 가능
+drop policy if exists "anon insert sales" on sales;
+create policy "anon insert sales" on sales
+  for insert to anon with check (true);
