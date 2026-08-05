@@ -438,15 +438,21 @@
   }
 
   @media (max-width: 768px) {
+    html, body {
+      overflow-x: hidden !important;
+    }
     .container {
       grid-template-columns: 1fr;
       gap: 16px;
       padding: 16px;
       padding-bottom: 280px;
       height: auto;
+      width: 100%;
+      overflow-x: hidden;
     }
     .products {
-      max-height: calc(100vh - 300px);
+      max-height: none;
+      overflow-y: visible;
     }
     .cart-panel {
       position: fixed;
@@ -630,11 +636,12 @@
   /* 강제 레이아웃 모드 */
   body.force-mobile {
     max-width: 480px !important;
-    width: 480px !important;
+    width: 100% !important;
     margin: 0 auto !important;
     box-shadow: 0 0 60px rgba(0,0,0,0.15);
     border-radius: 12px;
-    overflow: hidden;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
   }
   body.force-mobile .header {
     padding: 12px 8px;
@@ -722,6 +729,7 @@
     margin: 0;
   }
   body.force-mobile .container {
+    height: auto !important;
     padding-bottom: 300px;
   }
   body.force-mobile .cart-items {
@@ -770,9 +778,13 @@
     .container {
       padding: 10px;
       padding-bottom: 300px;
+      height: auto;
+      width: 100%;
+      overflow-x: hidden;
     }
     .products {
-      max-height: calc(100vh - 320px);
+      max-height: none;
+      overflow-y: visible;
     }
     .cart-panel {
       position: fixed;
