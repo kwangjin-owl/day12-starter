@@ -500,8 +500,8 @@
     }
 
     .products {
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      grid-auto-rows: 180px;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 200px;
       gap: 12px;
       height: auto;
       max-height: none;
@@ -661,15 +661,15 @@
     font-size: 11px;
   }
   body.force-mobile .products {
-    grid-template-columns: 1fr !important;
-    grid-auto-rows: 180px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: 200px;
     gap: 12px;
     padding-left: 4px;
     height: auto;
     max-height: none;
   }
   body.force-mobile .product {
-    height: 180px !important;
+    height: 200px !important;
     padding: 12px;
     border-radius: 12px;
   }
@@ -798,8 +798,8 @@
     }
 
     .product {
-      height: 160px;
-      padding: 10px;
+      height: 200px;
+      padding: 12px;
     }
     .product-icon {
       font-size: 28px;
@@ -1010,21 +1010,31 @@ function renderProducts() {
     });
 
   const html = filtered.map(p => {
-    const variants = Object.keys(p.variants);
+    const allVariants = Object.keys(p.variants);
+    const realVariants = allVariants.filter(v => v);
+    const hasOptions = realVariants.length > 0;
     const selectedVariant = selectedVariants[p.originalIndex];
-    const cartKey = selectedVariant ? `${p.originalIndex}:${selectedVariant}` : "";
     const qty = Object.keys(cart).filter(k => k.startsWith(p.originalIndex + ":")).reduce((sum, k) => sum + (cart[k] || 0), 0);
 
-    const variantButtons = variants.map(v => {
+    let cartKey = "";
+    if (hasOptions) {
+      cartKey = selectedVariant ? `${p.originalIndex}:${selectedVariant}` : "";
+    } else {
+      cartKey = `${p.originalIndex}:${allVariants[0]}`;
+    }
+
+    const variantButtons = allVariants.map(v => {
       const variantKey = `${p.originalIndex}:${v}`;
       const variantQty = cart[variantKey] || 0;
       const btnText = v ? `${v}<br>${formatPrice(p.variants[v])}` : formatPrice(p.variants[v]);
       return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${btnText}</button>`;
     }).join("");
 
-    const variantSelector = `<div class="variant-selector" data-variant-count="${variants.length}">${variantButtons}</div>`;
+    const variantSelector = `<div class="variant-selector" data-variant-count="${allVariants.length}">${variantButtons}</div>`;
 
-    const qtyControls = `
+    const qtyControls = (hasOptions && !selectedVariant)
+      ? `<div class="qty-info">선택 필요</div>`
+      : `
       <div class="qty-controls">
         <button class="qty-btn" onclick="changeQty('${cartKey}', -1)">−</button>
         <div class="qty-display">${qty}</div>
