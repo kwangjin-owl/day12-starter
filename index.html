@@ -39,7 +39,7 @@
   }
 
   /* 상품 그리드 */
-  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: 215px; gap: 16px; overflow-y: scroll; height: 690px; padding-right: 10px; }
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: 215px; gap: 16px; overflow-y: scroll; height: 690px; padding-left: 6px; padding-right: 10px; }
 
   .product {
     background: var(--panel);
@@ -478,6 +478,7 @@
       height: auto;
       max-height: none;
       overflow-y: auto;
+      padding-left: 4px;
       padding-right: 6px;
     }
 
@@ -590,6 +591,22 @@
       font-size: 11px;
       border-radius: 6px;
     }
+  }
+
+  /* 강제 레이아웃 모드 */
+  body.force-mobile {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  body.force-mobile .container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+    height: auto;
+  }
+  body.force-mobile .products {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-auto-rows: 160px;
   }
 
   @media (max-width: 480px) {
@@ -706,7 +723,10 @@
     <h1>☕ 커피 주문</h1>
     <p>원하는 음료를 선택하세요</p>
   </div>
-  <a href="admin.html" style="background: rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; display: inline-block; white-space: nowrap;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)'">📊 관리자</a>
+  <div style="display: flex; gap: 8px;">
+    <button id="layout-toggle" onclick="toggleLayout()" style="background: rgba(255, 255, 255, 0.2); padding: 10px 16px; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)'">📱 모바일</button>
+    <a href="admin.html" style="background: rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; display: inline-block; white-space: nowrap;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)'">📊 관리자</a>
+  </div>
 </div>
 
 <div class="container">
@@ -1045,7 +1065,34 @@ function showMessage(text, type) {
   }, 3000);
 }
 
+let forceLayout = localStorage.getItem('forceLayout') || 'auto';
+
+function toggleLayout() {
+  if (forceLayout === 'auto') {
+    forceLayout = 'mobile';
+    document.body.classList.add('force-mobile');
+    document.getElementById('layout-toggle').textContent = '💻 PC';
+  } else if (forceLayout === 'mobile') {
+    forceLayout = 'pc';
+    document.body.classList.remove('force-mobile');
+    document.body.classList.add('force-pc');
+    document.getElementById('layout-toggle').textContent = '📱 모바일';
+  } else {
+    forceLayout = 'auto';
+    document.body.classList.remove('force-pc', 'force-mobile');
+    document.getElementById('layout-toggle').textContent = '📱 모바일';
+  }
+  localStorage.setItem('forceLayout', forceLayout);
+}
+
 // 초기 렌더링
+if (forceLayout === 'mobile') {
+  document.body.classList.add('force-mobile');
+  document.getElementById('layout-toggle').textContent = '💻 PC';
+} else if (forceLayout === 'pc') {
+  document.body.classList.add('force-pc');
+  document.getElementById('layout-toggle').textContent = '📱 모바일';
+}
 renderProducts();
 </script>
 </body>
