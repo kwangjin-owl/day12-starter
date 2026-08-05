@@ -276,8 +276,12 @@
 
   /* 강제 모바일 모드 */
   body.force-mobile {
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 480px !important;
+    width: 480px !important;
+    margin: 0 auto !important;
+    box-shadow: 0 0 60px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    overflow: hidden;
   }
   body.force-mobile .header {
     padding: 12px 8px;
