@@ -183,7 +183,12 @@
     font-size: 14px;
     transition: all 0.2s;
   }
-  .qty-btn:hover { background: #1e4d3d; transform: scale(1.1); }
+  .qty-btn:hover:not(:disabled) { background: #1e4d3d; transform: scale(1.1); }
+  .qty-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
   .qty-display { font-weight: 700; font-size: 14px; min-width: 20px; text-align: center; }
 
   /* 장바구니 */
@@ -1032,13 +1037,12 @@ function renderProducts() {
 
     const variantSelector = `<div class="variant-selector" data-variant-count="${allVariants.length}">${variantButtons}</div>`;
 
-    const qtyControls = (hasOptions && !selectedVariant)
-      ? `<div class="qty-info">선택 필요</div>`
-      : `
+    const isDisabled = hasOptions && !selectedVariant;
+    const qtyControls = `
       <div class="qty-controls">
-        <button class="qty-btn" onclick="changeQty('${cartKey}', -1)">−</button>
-        <div class="qty-display">${qty}</div>
-        <button class="qty-btn" onclick="changeQty('${cartKey}', 1)">+</button>
+        <button class="qty-btn ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="if(!this.disabled) changeQty('${cartKey}', -1)">−</button>
+        <div class="qty-display">${isDisabled ? '선택 필요' : qty}</div>
+        <button class="qty-btn ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="if(!this.disabled) changeQty('${cartKey}', 1)">+</button>
       </div>
     `;
 
