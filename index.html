@@ -96,7 +96,8 @@
     white-space: nowrap;
   }
   .product-badge-best {
-    top: 28px;
+    top: 8px;
+    right: 60px;
     background: linear-gradient(135deg, #c41e3a, #e91e63);
     box-shadow: 0 3px 10px rgba(196, 30, 58, 0.35);
   }
@@ -421,9 +422,225 @@
       grid-template-columns: 1fr;
       gap: 16px;
       padding: 16px;
+      height: auto;
     }
     .products { max-height: 50vh; }
     .cart-panel { max-height: fit-content; }
+  }
+
+  @media (max-width: 768px) {
+    .header {
+      padding: 16px 12px;
+    }
+    .header h1 {
+      font-size: 24px;
+    }
+    .header p {
+      font-size: 12px;
+    }
+    .header a {
+      font-size: 12px !important;
+      padding: 8px 12px !important;
+    }
+
+    .container {
+      grid-template-columns: 1fr;
+      padding: 12px;
+      margin: 0;
+      border-radius: 12px;
+      height: auto;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-tabs {
+      gap: 6px;
+      padding: 8px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    .category-tab {
+      padding: 8px 14px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .products {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-auto-rows: 180px;
+      gap: 12px;
+      height: auto;
+      max-height: none;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .product {
+      height: 180px;
+      padding: 12px;
+      border-radius: 12px;
+    }
+    .product-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+    }
+    .product-name {
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+
+    .variant-selector {
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .variant-btn {
+      padding: 6px 10px;
+      font-size: 9px;
+      border-radius: 6px;
+    }
+
+    .product-badge {
+      top: 6px;
+      right: 6px;
+      font-size: 9px;
+      padding: 4px 8px;
+      border-radius: 10px;
+    }
+    .product-badge-best {
+      right: 50px;
+    }
+
+    .qty-controls {
+      gap: 4px;
+      padding: 4px;
+      margin-top: 4px;
+    }
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+    }
+    .qty-display {
+      font-size: 12px;
+      min-width: 16px;
+    }
+    .qty-info {
+      font-size: 10px;
+      padding: 4px;
+      margin-top: 2px;
+    }
+
+    .cart-panel {
+      height: auto;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+    .cart-title {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .cart-items {
+      max-height: 200px;
+      margin-bottom: 12px;
+    }
+    .cart-item {
+      padding: 10px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      border-radius: 8px;
+    }
+    .item-name {
+      font-size: 11px;
+    }
+    .item-qty {
+      font-size: 10px;
+    }
+
+    .buyer-section {
+      margin-top: 12px;
+      padding-top: 10px;
+    }
+    .buyer-section label {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+    .buyer-section input {
+      padding: 8px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    .order-btn {
+      padding: 10px;
+      font-size: 13px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    #message {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 11px;
+      border-radius: 6px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header h1 {
+      font-size: 20px;
+    }
+    .header p {
+      font-size: 11px;
+    }
+
+    .container {
+      padding: 10px;
+    }
+
+    .category-tabs {
+      gap: 4px;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+    .category-tab {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    .products {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      grid-auto-rows: 160px;
+      gap: 10px;
+    }
+
+    .product {
+      height: 160px;
+      padding: 10px;
+    }
+    .product-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+    .product-name {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .variant-btn {
+      padding: 4px 8px;
+      font-size: 8px;
+    }
+
+    .cart-panel {
+      padding: 12px;
+    }
+    .cart-items {
+      max-height: 150px;
+    }
   }
 
   /* 스크롤바 스타일 */
