@@ -96,10 +96,10 @@
   .product-icon { font-size: 40px; margin-bottom: 8px; }
   .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
 
-  .variant-selector { display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 8px; }
+  .variant-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
   .variant-btn {
-    padding: 6px 8px;
-    font-size: 11px;
+    padding: 6px 4px;
+    font-size: 10px;
     font-weight: 600;
     border: 1px solid var(--line);
     background: white;
@@ -108,14 +108,35 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .variant-btn:hover {
-    background: var(--green-soft);
-    border-color: var(--green);
+  .variant-btn[data-variant="HOT"],
+  .variant-btn[data-variant=""] {
+    border-color: #dd7b35;
+    background: #fde8d8;
   }
-  .variant-btn.active {
-    background: var(--green);
+  .variant-btn[data-variant="HOT"]:hover,
+  .variant-btn[data-variant=""]:hover {
+    background: #fdd5b9;
+  }
+  .variant-btn[data-variant="ICE"],
+  .variant-btn[data-variant="COLD"] {
+    border-color: #4a9dcc;
+    background: #d4e8f5;
+  }
+  .variant-btn[data-variant="ICE"]:hover,
+  .variant-btn[data-variant="COLD"]:hover {
+    background: #b8ddef;
+  }
+  .variant-btn.active[data-variant="HOT"],
+  .variant-btn.active[data-variant=""] {
+    background: #dd7b35;
     color: white;
-    border-color: var(--green);
+    border-color: #dd7b35;
+  }
+  .variant-btn.active[data-variant="ICE"],
+  .variant-btn.active[data-variant="COLD"] {
+    background: #4a9dcc;
+    color: white;
+    border-color: #4a9dcc;
   }
 
   .qty-controls {
@@ -578,7 +599,7 @@ function renderProducts() {
     const variantButtons = variants.map(v => {
       const variantKey = `${p.originalIndex}:${v}`;
       const variantQty = cart[variantKey] || 0;
-      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v} ${formatPrice(p.variants[v])}</button>`;
+      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v}<br>${formatPrice(p.variants[v])}</button>`;
     }).join("");
 
     const variantSelector = variants.length > 0 ? `<div class="variant-selector">${variantButtons}</div>` : `<div class="product-price">${formatPrice(p.price)}</div>`;
