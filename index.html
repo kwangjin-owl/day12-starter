@@ -432,6 +432,30 @@
   }
 
   @media (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+      padding-bottom: 280px;
+      height: auto;
+    }
+    .products {
+      max-height: calc(100vh - 300px);
+    }
+    .cart-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 270px;
+      border-radius: 16px 16px 0 0;
+      z-index: 100;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      margin: 0;
+      width: 100%;
+    }
+
     .header {
       padding: 14px 10px;
     }
@@ -678,10 +702,21 @@
     font-size: 12px;
   }
   body.force-mobile .cart-panel {
-    padding: 16px;
-    margin-top: 12px;
-    height: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 290px;
+    border-radius: 16px 16px 0 0;
+    z-index: 100;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+    overflow-y: auto;
     width: 100%;
+    padding: 16px;
+    margin: 0;
+  }
+  body.force-mobile .container {
+    padding-bottom: 300px;
   }
   body.force-mobile .cart-items {
     max-height: 200px;
@@ -728,6 +763,22 @@
 
     .container {
       padding: 10px;
+      padding-bottom: 300px;
+    }
+    .products {
+      max-height: calc(100vh - 320px);
+    }
+    .cart-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 290px;
+      border-radius: 16px 16px 0 0;
+      z-index: 100;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      width: 100%;
     }
 
     .category-tabs {
@@ -959,7 +1010,7 @@ function renderProducts() {
     });
 
   const html = filtered.map(p => {
-    const variants = Object.keys(p.variants).filter(v => v !== "");
+    const variants = Object.keys(p.variants);
     const selectedVariant = selectedVariants[p.originalIndex];
     const cartKey = selectedVariant ? `${p.originalIndex}:${selectedVariant}` : "";
     const qty = Object.keys(cart).filter(k => k.startsWith(p.originalIndex + ":")).reduce((sum, k) => sum + (cart[k] || 0), 0);
@@ -967,10 +1018,11 @@ function renderProducts() {
     const variantButtons = variants.map(v => {
       const variantKey = `${p.originalIndex}:${v}`;
       const variantQty = cart[variantKey] || 0;
-      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v}<br>${formatPrice(p.variants[v])}</button>`;
+      const btnText = v ? `${v}<br>${formatPrice(p.variants[v])}` : formatPrice(p.variants[v]);
+      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${btnText}</button>`;
     }).join("");
 
-    const variantSelector = variants.length > 0 ? `<div class="variant-selector" data-variant-count="${variants.length}">${variantButtons}</div>` : `<div class="product-price">${formatPrice(p.price)}</div>`;
+    const variantSelector = `<div class="variant-selector" data-variant-count="${variants.length}">${variantButtons}</div>`;
 
     const qtyControls = `
       <div class="qty-controls">
