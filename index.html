@@ -95,7 +95,28 @@
 
   .product-icon { font-size: 40px; margin-bottom: 8px; }
   .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .product-price { font-size: 16px; font-weight: 700; color: var(--orange); margin-bottom: 10px; }
+
+  .variant-selector { display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 8px; }
+  .variant-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--ink);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .variant-btn:hover {
+    background: var(--green-soft);
+    border-color: var(--green);
+  }
+  .variant-btn.active {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
 
   .qty-controls {
     display: flex;
@@ -436,9 +457,9 @@
     <div class="category-tabs">
       <button class="category-tab active" data-category="all" onclick="filterProducts('all')">☕ 전체</button>
       <button class="category-tab" data-category="americano" onclick="filterProducts('americano')">아메리카노</button>
-      <button class="category-tab" data-category="espresso" onclick="filterProducts('espresso')">에스프레소</button>
       <button class="category-tab" data-category="latte" onclick="filterProducts('latte')">라떼</button>
-      <button class="category-tab" data-category="other" onclick="filterProducts('other')">기타</button>
+      <button class="category-tab" data-category="cappuccino" onclick="filterProducts('cappuccino')">카푸치노</button>
+      <button class="category-tab" data-category="specialty" onclick="filterProducts('specialty')">스페셜</button>
     </div>
     <div class="products" id="products"></div>
   </div>
@@ -503,17 +524,18 @@
 
 <script>
 const products = [
-  { name: "아메리카노", price: 3500, icon: "☕", category: "americano" },
-  { name: "아이스 아메리카노", price: 4000, icon: "☕", category: "americano" },
-  { name: "더블 에스프레소", price: 4500, icon: "☕☕", category: "espresso", isNew: true },
-  { name: "카페라떼", price: 4500, icon: "🥛", category: "latte" },
-  { name: "아이스 라떼", price: 5000, icon: "🥛", category: "latte" },
-  { name: "초콜릿 라떼", price: 5500, icon: "🥛", category: "latte", isNew: true },
-  { name: "바닐라 라떼", price: 5500, icon: "🥛", category: "latte", isNew: true },
-  { name: "헤이즐넛라떼", price: 5000, icon: "🌰", category: "latte" },
-  { name: "카푸치노", price: 4500, icon: "🫖", category: "cappuccino" },
-  { name: "블루 마운틴", price: 6500, icon: "⛰️", category: "specialty", isNew: true },
-  { name: "딸기 요거트", price: 6000, icon: "🍓", category: "beverage", isNew: true }
+  { name: "아메리카노", category: "americano", icon: "☕", variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "롱블랙", category: "americano", icon: "☕", variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "더블샷", category: "americano", icon: "☕☕", variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "카페라떼", category: "latte", icon: "🥛", variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "헤이즐넛라떼", category: "latte", icon: "🌰", variants: { "HOT": 5000, "ICE": 5500 } },
+  { name: "초콜릿라떼", category: "latte", icon: "🥛", variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
+  { name: "바닐라라떼", category: "latte", icon: "🥛", variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
+  { name: "카푸치노", category: "cappuccino", icon: "🫖", variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "플랫화이트", category: "cappuccino", icon: "🫖", variants: { "HOT": 5000, "ICE": 5500 } },
+  { name: "아프로가토", category: "specialty", icon: "🍨", variants: { "HOT": 5000 } },
+  { name: "블루마운틴", category: "specialty", icon: "⛰️", variants: { "HOT": 6500 }, isNew: true },
+  { name: "딸기요거트", category: "specialty", icon: "🍓", variants: { "COLD": 6000 }, isNew: true }
 ];
 
 let cart = {};
@@ -538,25 +560,30 @@ function renderProducts() {
     .map((p, i) => ({ ...p, originalIndex: i }))
     .filter(p => {
       if (currentCategory === "all") return true;
-      if (currentCategory === "americano") return p.category === "americano";
-      if (currentCategory === "espresso") return p.category === "espresso";
-      if (currentCategory === "latte") return p.category === "latte";
-      if (currentCategory === "other") return ["cappuccino", "specialty", "beverage"].includes(p.category);
-      return true;
+      return p.category === currentCategory;
     });
 
   const html = filtered.map(p => {
-    const qty = cart[p.originalIndex] || 0;
+    const variants = Object.keys(p.variants);
+    const cartKey = `${p.originalIndex}:HOT`;
+    const qty = Object.keys(cart).filter(k => k.startsWith(p.originalIndex + ":")).reduce((sum, k) => sum + (cart[k] || 0), 0);
+
+    const variantButtons = variants.map(v => {
+      const variantKey = `${p.originalIndex}:${v}`;
+      const variantQty = cart[variantKey] || 0;
+      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v} ${formatPrice(p.variants[v])}</button>`;
+    }).join("");
+
     return `
       <div class="product ${qty > 0 ? "selected" : ""}">
         ${p.isNew ? '<div class="product-badge">신메뉴</div>' : ''}
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${p.name}</div>
-        <div class="product-price">${formatPrice(p.price)}</div>
+        <div class="variant-selector">${variantButtons}</div>
         <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(${p.originalIndex}, -1)">−</button>
+          <button class="qty-btn" onclick="changeQty('${p.originalIndex}:HOT', -1)">−</button>
           <div class="qty-display">${qty}</div>
-          <button class="qty-btn" onclick="changeQty(${p.originalIndex}, 1)">+</button>
+          <button class="qty-btn" onclick="changeQty('${p.originalIndex}:HOT', 1)">+</button>
         </div>
       </div>
     `;
@@ -564,19 +591,28 @@ function renderProducts() {
   document.getElementById("products").innerHTML = html;
 }
 
-function changeQty(index, delta) {
-  const newQty = (cart[index] || 0) + delta;
-  if (newQty <= 0) {
-    delete cart[index];
-  } else {
-    cart[index] = newQty;
+function selectVariant(productIndex, variant) {
+  const variantKey = `${productIndex}:${variant}`;
+  if (!cart[variantKey]) {
+    cart[variantKey] = 1;
   }
   renderProducts();
   updateCart();
 }
 
-function removeFromCart(index) {
-  delete cart[index];
+function changeQty(cartKey, delta) {
+  const newQty = (cart[cartKey] || 0) + delta;
+  if (newQty <= 0) {
+    delete cart[cartKey];
+  } else {
+    cart[cartKey] = newQty;
+  }
+  renderProducts();
+  updateCart();
+}
+
+function removeFromCart(cartKey) {
+  delete cart[cartKey];
   renderProducts();
   updateCart();
 }
@@ -588,19 +624,21 @@ function updateCart() {
   if (isEmpty) {
     document.getElementById("cart-items").innerHTML = '<div class="cart-empty">비어있습니다</div>';
   } else {
-    const html = items.map(([i, qty]) => {
-      const p = products[i];
-      const itemTotal = p.price * qty;
+    const html = items.map(([cartKey, qty]) => {
+      const [productIndex, variant] = cartKey.split(":");
+      const p = products[parseInt(productIndex)];
+      const price = p.variants[variant];
+      const itemTotal = price * qty;
       return `
         <div class="cart-item">
           <div class="item-info">
-            <div class="item-name">${p.name}</div>
-            <div class="item-qty">${qty}개 × ${formatPrice(p.price)}</div>
+            <div class="item-name">${p.name}(${variant})</div>
+            <div class="item-qty">${qty}개 × ${formatPrice(price)}</div>
           </div>
           <div>
             <div class="item-price">${formatPrice(itemTotal)}</div>
           </div>
-          <div class="item-remove" onclick="removeFromCart(${i})">✕</div>
+          <div class="item-remove" onclick="removeFromCart('${cartKey}')">✕</div>
         </div>
       `;
     }).join("");
@@ -608,7 +646,11 @@ function updateCart() {
   }
 
   const totalQty = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-  const totalPrice = Object.entries(cart).reduce((sum, [i, qty]) => sum + (products[i].price * qty), 0);
+  const totalPrice = Object.entries(cart).reduce((sum, [cartKey, qty]) => {
+    const [productIndex, variant] = cartKey.split(":");
+    const p = products[parseInt(productIndex)];
+    return sum + (p.variants[variant] * qty);
+  }, 0);
 
   document.getElementById("total-qty").textContent = totalQty + "개";
   document.getElementById("total-price").textContent = formatPrice(totalPrice);
@@ -630,17 +672,19 @@ document.getElementById("order-btn").addEventListener("click", async () => {
   let firstOrderId = null;
 
   try {
-    for (const [i, qty] of items) {
-      const p = products[i];
+    for (const [cartKey, qty] of items) {
+      const [productIndex, variant] = cartKey.split(":");
+      const p = products[parseInt(productIndex)];
+      const price = p.variants[variant];
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           buyer_name: buyerName,
-          product: p.name,
+          product: `${p.name}(${variant})`,
           quantity: qty,
-          price_per_unit: p.price,
-          total_price: p.price * qty
+          price_per_unit: price,
+          total_price: price * qty
         })
       });
       if (!res.ok) throw new Error("주문 실패");
@@ -667,19 +711,25 @@ function showReceipt(buyerName, items, dbId) {
   document.getElementById("receipt-order-id").textContent = orderId;
   document.getElementById("receipt-time").textContent = timeStr;
 
-  const itemsHtml = items.map(([i, qty]) => {
-    const p = products[i];
+  const itemsHtml = items.map(([cartKey, qty]) => {
+    const [productIndex, variant] = cartKey.split(":");
+    const p = products[parseInt(productIndex)];
+    const price = p.variants[variant];
     return `
       <div class="receipt-item">
-        <span>${p.name} ${qty}개</span>
-        <span>${formatPrice(p.price * qty)}</span>
+        <span>${p.name}(${variant}) ${qty}개</span>
+        <span>${formatPrice(price * qty)}</span>
       </div>
     `;
   }).join("");
 
   document.getElementById("receipt-items").innerHTML = itemsHtml;
 
-  const totalPrice = items.reduce((sum, [i, qty]) => sum + (products[i].price * qty), 0);
+  const totalPrice = items.reduce((sum, [cartKey, qty]) => {
+    const [productIndex, variant] = cartKey.split(":");
+    const p = products[parseInt(productIndex)];
+    return sum + (p.variants[variant] * qty);
+  }, 0);
   document.getElementById("receipt-total").textContent = formatPrice(totalPrice);
 
   document.getElementById("receipt-modal").classList.add("show");
