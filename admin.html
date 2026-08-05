@@ -21,11 +21,14 @@
     font-family: "Apple SD Gothic Neo", Pretendard, sans-serif;
     color: var(--ink);
     background: linear-gradient(135deg, var(--paper) 0%, #f0ede3 100%);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 16px;
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
   }
+  .header { background: linear-gradient(135deg, var(--green) 0%, #1a5f47 100%); color: white; padding: 24px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(37, 115, 87, 0.15); }
+  .header h1 { margin: 0; font-size: 32px; font-weight: 700; color: white; }
+  .header p { margin: 4px 0 0; opacity: 0.9; font-size: 14px; color: white; }
+  .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
   h1 { font-size: 32px; margin: 0 0 4px; background: linear-gradient(135deg, var(--green) 0%, #1a5f47 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   p.lead { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
   .card {
@@ -215,14 +218,15 @@
 </style>
 </head>
 <body>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 24px 16px; margin-bottom: 24px;">
+<div class="header">
   <div>
-    <h1 style="margin: 0 0 4px; font-size: 32px;">☕ 매출 관리 대시보드</h1>
-    <p class="lead" style="margin: 0;">커피 자판기 판매 현황을 한눈에 확인하세요.</p>
+    <h1>☕ 매출 관리 대시보드</h1>
+    <p>커피 자판기 판매 현황을 한눈에 확인하세요.</p>
   </div>
-  <a href="index.html" style="background: linear-gradient(135deg, var(--green), #1a5f47); padding: 10px 20px; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 115, 87, 0.2); display: inline-block; white-space: nowrap;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(37, 115, 87, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(37, 115, 87, 0.2)'">⬅ 메인</a>
+  <a href="index.html" style="background: rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; display: inline-block; white-space: nowrap;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)'">⬅ 메인</a>
 </div>
 
+<div class="content-wrapper">
 <!-- 탭 -->
 <div class="tabs">
   <button class="tab-btn active" data-tab="dashboard">📊 대시보드</button>
@@ -734,5 +738,6 @@ loadSummary(today);
 loadDaily();
 loadHourly();
 </script>
+</div>
 </body>
 </html>
