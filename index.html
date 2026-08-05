@@ -43,7 +43,7 @@
 
   .product {
     background: var(--panel);
-    border: none;
+    border: 2px solid var(--line);
     border-radius: 16px;
     padding: 16px;
     text-align: center;
@@ -94,6 +94,11 @@
     box-shadow: 0 3px 10px rgba(221, 123, 53, 0.35);
     letter-spacing: 0.2px;
     white-space: nowrap;
+  }
+  .product-badge-best {
+    top: 28px;
+    background: linear-gradient(135deg, #c41e3a, #e91e63);
+    box-shadow: 0 3px 10px rgba(196, 30, 58, 0.35);
   }
 
   .product-icon { font-size: 40px; margin-bottom: 8px; flex-shrink: 0; }
@@ -559,15 +564,15 @@
 
 <script>
 const products = [
-  { name: "아메리카노", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 } },
-  { name: "롱블랙", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "아메리카노", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 }, isBest: true },
+  { name: "롱블랙", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 }, isBest: true },
   { name: "더블샷", category: "americano", icon: "☕☕", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
   { name: "카페라떼", category: "latte", icon: "🥛", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
-  { name: "헤이즐넛라떼", category: "latte", icon: "🌰", price: 5000, variants: { "HOT": 5000, "ICE": 5500 } },
+  { name: "헤이즐넛라떼", category: "latte", icon: "🌰", price: 5000, variants: { "HOT": 5000, "ICE": 5500 }, isBest: true },
   { name: "초콜릿라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 } },
   { name: "바닐라라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 } },
   { name: "카라멜라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
-  { name: "카푸치노", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "카푸치노", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 }, isBest: true },
   { name: "플랫화이트", category: "cappuccino", icon: "🫖", price: 5000, variants: { "HOT": 5000, "ICE": 5500 } },
   { name: "마키아토", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 }, isNew: true },
   { name: "핫초콜릿", category: "beverage", icon: "🍫", price: 4500, variants: { "HOT": 4500 } },
@@ -629,7 +634,8 @@ function renderProducts() {
 
     return `
       <div class="product ${qty > 0 ? "selected" : ""}">
-        ${p.isNew ? '<div class="product-badge">신메뉴</div>' : ''}
+        ${p.isBest ? '<div class="product-badge product-badge-best">best</div>' : ''}
+        ${p.isNew ? '<div class="product-badge">new</div>' : ''}
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${p.name}</div>
         ${variantSelector}
