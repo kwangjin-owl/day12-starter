@@ -39,7 +39,7 @@
   }
 
   /* 상품 그리드 */
-  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; overflow-y: auto; height: 520px; padding-right: 10px; }
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; overflow-y: auto; height: 760px; padding-right: 10px; }
 
   .product {
     background: var(--panel);
@@ -99,8 +99,8 @@
   .product-icon { font-size: 40px; margin-bottom: 8px; flex-shrink: 0; }
   .product-name { font-size: 13px; font-weight: 700; margin-bottom: 8px; flex-shrink: 0; }
 
-  .variant-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; flex: 1; align-content: start; }
-  .product-price { font-size: 14px; font-weight: 700; color: var(--orange); margin-bottom: 4px; flex: 1; display: flex; align-items: flex-start; justify-content: center; }
+  .variant-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 2px; flex: 1; align-content: start; min-height: 50px; }
+  .product-price { font-size: 14px; font-weight: 700; color: var(--orange); margin-bottom: 2px; flex: 1; display: flex; align-items: flex-start; justify-content: center; min-height: 50px; }
   .variant-btn {
     padding: 6px 4px;
     font-size: 10px;
@@ -563,8 +563,8 @@ const products = [
   { name: "카푸치노", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
   { name: "플랫화이트", category: "cappuccino", icon: "🫖", price: 5000, variants: { "HOT": 5000, "ICE": 5500 } },
   { name: "마키아토", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 }, isNew: true },
-  { name: "핫초콜릿", category: "beverage", icon: "🍫", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
-  { name: "아이스티", category: "beverage", icon: "🧋", price: 3500, variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "핫초콜릿", category: "beverage", icon: "🍫", price: 4500, variants: { "HOT": 4500 } },
+  { name: "아이스티", category: "beverage", icon: "🧋", price: 3500, variants: { "ICE": 3500 } },
   { name: "딸기라떼", category: "beverage", icon: "🍓", price: 5000, variants: { "HOT": 5000, "ICE": 5500 }, isNew: true },
   { name: "크로와상", category: "dessert", icon: "🥐", price: 4500, variants: { "": 4500 } },
   { name: "초콜릿 케이크", category: "dessert", icon: "🍰", price: 6000, variants: { "": 6000 } },
