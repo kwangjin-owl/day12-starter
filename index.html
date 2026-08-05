@@ -155,6 +155,13 @@
     margin-top: 2px;
     flex-shrink: 0;
   }
+  .qty-info {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    padding: 8px;
+    margin-top: 2px;
+  }
   .qty-btn {
     width: 28px;
     height: 28px;
@@ -599,8 +606,8 @@ function renderProducts() {
 
   const html = filtered.map(p => {
     const variants = Object.keys(p.variants).filter(v => v !== "");
-    const selectedVariant = selectedVariants[p.originalIndex] || variants[0] || "";
-    const cartKey = `${p.originalIndex}:${selectedVariant}`;
+    const selectedVariant = selectedVariants[p.originalIndex];
+    const cartKey = selectedVariant ? `${p.originalIndex}:${selectedVariant}` : "";
     const qty = Object.keys(cart).filter(k => k.startsWith(p.originalIndex + ":")).reduce((sum, k) => sum + (cart[k] || 0), 0);
 
     const variantButtons = variants.map(v => {
@@ -612,17 +619,21 @@ function renderProducts() {
 
     const variantSelector = variants.length > 0 ? `<div class="variant-selector" data-variant-count="${variants.length}">${variantButtons}</div>` : `<div class="product-price">${formatPrice(p.price)}</div>`;
 
+    const qtyControls = selectedVariant ? `
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty('${cartKey}', -1)">−</button>
+        <div class="qty-display">${qty}</div>
+        <button class="qty-btn" onclick="changeQty('${cartKey}', 1)">+</button>
+      </div>
+    ` : `<div class="qty-info">선택 필요</div>`;
+
     return `
       <div class="product ${qty > 0 ? "selected" : ""}">
         ${p.isNew ? '<div class="product-badge">신메뉴</div>' : ''}
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${p.name}</div>
         ${variantSelector}
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty('${cartKey}', -1)">−</button>
-          <div class="qty-display">${qty}</div>
-          <button class="qty-btn" onclick="changeQty('${cartKey}', 1)">+</button>
-        </div>
+        ${qtyControls}
       </div>
     `;
   }).join("");
