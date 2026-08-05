@@ -459,7 +459,8 @@
       <button class="category-tab" data-category="americano" onclick="filterProducts('americano')">아메리카노</button>
       <button class="category-tab" data-category="latte" onclick="filterProducts('latte')">라떼</button>
       <button class="category-tab" data-category="cappuccino" onclick="filterProducts('cappuccino')">카푸치노</button>
-      <button class="category-tab" data-category="specialty" onclick="filterProducts('specialty')">스페셜</button>
+      <button class="category-tab" data-category="beverage" onclick="filterProducts('beverage')">음료</button>
+      <button class="category-tab" data-category="dessert" onclick="filterProducts('dessert')">디저트</button>
     </div>
     <div class="products" id="products"></div>
   </div>
@@ -524,18 +525,23 @@
 
 <script>
 const products = [
-  { name: "아메리카노", category: "americano", icon: "☕", variants: { "HOT": 3500, "ICE": 4000 } },
-  { name: "롱블랙", category: "americano", icon: "☕", variants: { "HOT": 3500, "ICE": 4000 } },
-  { name: "더블샷", category: "americano", icon: "☕☕", variants: { "HOT": 4500, "ICE": 5000 } },
-  { name: "카페라떼", category: "latte", icon: "🥛", variants: { "HOT": 4500, "ICE": 5000 } },
-  { name: "헤이즐넛라떼", category: "latte", icon: "🌰", variants: { "HOT": 5000, "ICE": 5500 } },
-  { name: "초콜릿라떼", category: "latte", icon: "🥛", variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
-  { name: "바닐라라떼", category: "latte", icon: "🥛", variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
-  { name: "카푸치노", category: "cappuccino", icon: "🫖", variants: { "HOT": 4500, "ICE": 5000 } },
-  { name: "플랫화이트", category: "cappuccino", icon: "🫖", variants: { "HOT": 5000, "ICE": 5500 } },
-  { name: "아프로가토", category: "specialty", icon: "🍨", variants: { "HOT": 5000 } },
-  { name: "블루마운틴", category: "specialty", icon: "⛰️", variants: { "HOT": 6500 }, isNew: true },
-  { name: "딸기요거트", category: "specialty", icon: "🍓", variants: { "COLD": 6000 }, isNew: true }
+  { name: "아메리카노", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "롱블랙", category: "americano", icon: "☕", price: 3500, variants: { "HOT": 3500, "ICE": 4000 } },
+  { name: "더블샷", category: "americano", icon: "☕☕", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "카페라떼", category: "latte", icon: "🥛", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "헤이즐넛라떼", category: "latte", icon: "🌰", price: 5000, variants: { "HOT": 5000, "ICE": 5500 } },
+  { name: "초콜릿라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 } },
+  { name: "바닐라라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 } },
+  { name: "카라멜라떼", category: "latte", icon: "🥛", price: 5500, variants: { "HOT": 5500, "ICE": 6000 }, isNew: true },
+  { name: "카푸치노", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "플랫화이트", category: "cappuccino", icon: "🫖", price: 5000, variants: { "HOT": 5000, "ICE": 5500 } },
+  { name: "마키아토", category: "cappuccino", icon: "🫖", price: 4500, variants: { "HOT": 4500, "ICE": 5000 }, isNew: true },
+  { name: "핫초콜릿", category: "beverage", icon: "🍫", price: 4500, variants: { "HOT": 4500, "ICE": 5000 } },
+  { name: "아이스티", category: "beverage", icon: "🧋", price: 3500, variants: { "": 3500 } },
+  { name: "딸기라떼", category: "beverage", icon: "🍓", price: 5000, variants: { "HOT": 5000, "ICE": 5500 }, isNew: true },
+  { name: "크로와상", category: "dessert", icon: "🥐", price: 4500, variants: { "": 4500 } },
+  { name: "초콜릿 케이크", category: "dessert", icon: "🍰", price: 6000, variants: { "": 6000 } },
+  { name: "쿠키", category: "dessert", icon: "🍪", price: 3500, variants: { "": 3500 }, isNew: true }
 ];
 
 let cart = {};
@@ -564,8 +570,9 @@ function renderProducts() {
     });
 
   const html = filtered.map(p => {
-    const variants = Object.keys(p.variants);
-    const cartKey = `${p.originalIndex}:HOT`;
+    const variants = Object.keys(p.variants).filter(v => v !== "");
+    const defaultVariant = variants.length > 0 ? variants[0] : "";
+    const cartKey = `${p.originalIndex}:${defaultVariant}`;
     const qty = Object.keys(cart).filter(k => k.startsWith(p.originalIndex + ":")).reduce((sum, k) => sum + (cart[k] || 0), 0);
 
     const variantButtons = variants.map(v => {
@@ -574,16 +581,18 @@ function renderProducts() {
       return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v} ${formatPrice(p.variants[v])}</button>`;
     }).join("");
 
+    const variantSelector = variants.length > 0 ? `<div class="variant-selector">${variantButtons}</div>` : `<div class="product-price">${formatPrice(p.price)}</div>`;
+
     return `
       <div class="product ${qty > 0 ? "selected" : ""}">
         ${p.isNew ? '<div class="product-badge">신메뉴</div>' : ''}
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${p.name}</div>
-        <div class="variant-selector">${variantButtons}</div>
+        ${variantSelector}
         <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty('${p.originalIndex}:HOT', -1)">−</button>
+          <button class="qty-btn" onclick="changeQty('${cartKey}', -1)">−</button>
           <div class="qty-display">${qty}</div>
-          <button class="qty-btn" onclick="changeQty('${p.originalIndex}:HOT', 1)">+</button>
+          <button class="qty-btn" onclick="changeQty('${cartKey}', 1)">+</button>
         </div>
       </div>
     `;
