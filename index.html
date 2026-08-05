@@ -81,10 +81,15 @@
     transform: scale(1.02);
   }
 
-  .product-badge {
+  .product-badges {
     position: absolute;
     top: 8px;
     right: 8px;
+    display: flex;
+    gap: 6px;
+    flex-direction: row-reverse;
+  }
+  .product-badge {
     background: linear-gradient(135deg, var(--orange), #e89051);
     color: white;
     font-size: 11px;
@@ -95,9 +100,7 @@
     letter-spacing: 0.2px;
     white-space: nowrap;
   }
-  .product-badge-best {
-    top: 8px;
-    right: 60px;
+  .product-badge.best {
     background: linear-gradient(135deg, #c41e3a, #e91e63);
     box-shadow: 0 3px 10px rgba(196, 30, 58, 0.35);
   }
@@ -502,15 +505,15 @@
       border-radius: 6px;
     }
 
-    .product-badge {
+    .product-badges {
       top: 6px;
       right: 6px;
+      gap: 4px;
+    }
+    .product-badge {
       font-size: 9px;
       padding: 4px 8px;
       border-radius: 10px;
-    }
-    .product-badge-best {
-      right: 50px;
     }
 
     .qty-controls {
@@ -850,8 +853,10 @@ function renderProducts() {
 
     return `
       <div class="product ${qty > 0 ? "selected" : ""}">
-        ${p.isBest ? '<div class="product-badge product-badge-best">best</div>' : ''}
-        ${p.isNew ? '<div class="product-badge">new</div>' : ''}
+        <div class="product-badges">
+          ${p.isBest ? '<div class="product-badge best">best</div>' : ''}
+          ${p.isNew ? '<div class="product-badge">new</div>' : ''}
+        </div>
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${p.name}</div>
         ${variantSelector}
