@@ -14,15 +14,17 @@ export default async function handler(req, res) {
   }
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("sales")
-    .insert({ buyer_name, product, quantity, price_per_unit, total_price });
+    .insert({ buyer_name, product, quantity, price_per_unit, total_price })
+    .select();
 
   if (error) {
     console.log(JSON.stringify({ event: "order", ok: false, error: error.message, duration_ms: Date.now() - t0 }));
     return res.status(500).json({ error: error.message });
   }
 
-  console.log(JSON.stringify({ event: "order", ok: true, product, quantity, duration_ms: Date.now() - t0 }));
-  return res.status(200).json({ ok: true });
+  const orderId = data && data[0] ? data[0].id : null;
+  console.log(JSON.stringify({ event: "order", ok: true, product, quantity, orderId, duration_ms: Date.now() - t0 }));
+  return res.status(200).json({ ok: true, id: orderId });
 }

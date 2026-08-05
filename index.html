@@ -73,7 +73,9 @@
   }
   .product.selected {
     background: linear-gradient(135deg, var(--green-light), #d4e8e3);
-    border: 2px solid var(--green);
+    border: 3px solid var(--green);
+    box-shadow: 0 0 0 3px rgba(37, 115, 87, 0.15), 0 12px 24px rgba(37, 115, 87, 0.2);
+    transform: scale(1.02);
   }
 
   .product-badge {
@@ -390,26 +392,31 @@
     gap: 8px;
     margin-bottom: 20px;
     border-bottom: 2px solid var(--line);
-    padding-bottom: 12px;
+    padding-bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(37, 115, 87, 0.03) 100%);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
   }
   .category-tab {
     padding: 10px 18px;
-    background: none;
+    background: rgba(255, 255, 255, 0.5);
     border: none;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     color: var(--muted);
-    border-bottom: 3px solid transparent;
-    margin-bottom: -12px;
+    border-radius: 8px;
     transition: all 0.2s;
   }
   .category-tab:hover {
     color: var(--green);
+    background: rgba(37, 115, 87, 0.08);
   }
   .category-tab.active {
-    color: var(--green);
-    border-bottom-color: var(--green);
+    color: white;
+    background: linear-gradient(135deg, var(--green), #1a5f47);
+    box-shadow: 0 4px 12px rgba(37, 115, 87, 0.2);
   }
 </style>
 </head>
@@ -616,6 +623,7 @@ document.getElementById("order-btn").addEventListener("click", async () => {
   const button = document.getElementById("order-btn");
   button.disabled = true;
   lastOrderTime = new Date();
+  let firstOrderId = null;
 
   try {
     for (const [i, qty] of items) {
@@ -632,9 +640,11 @@ document.getElementById("order-btn").addEventListener("click", async () => {
         })
       });
       if (!res.ok) throw new Error("주문 실패");
+      const data = await res.json();
+      if (!firstOrderId && data.id) firstOrderId = data.id;
     }
 
-    showReceipt(buyerName, items);
+    showReceipt(buyerName, items, firstOrderId);
     cart = {};
     document.getElementById("buyer-name").value = "";
     renderProducts();
@@ -646,8 +656,8 @@ document.getElementById("order-btn").addEventListener("click", async () => {
   }
 });
 
-function showReceipt(buyerName, items) {
-  const orderId = `ORDER-${lastOrderTime.toISOString().split('T')[0].replace(/-/g, '')}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+function showReceipt(buyerName, items, dbId) {
+  const orderId = dbId ? `#${dbId}` : `ORDER-${lastOrderTime.toISOString().split('T')[0].replace(/-/g, '')}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
   const timeStr = lastOrderTime.toLocaleString("ko-KR", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   document.getElementById("receipt-order-id").textContent = orderId;
