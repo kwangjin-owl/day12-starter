@@ -21,8 +21,8 @@
   body { font-family: "Apple SD Gothic Neo", Pretendard, sans-serif; color: var(--ink); background: linear-gradient(135deg, var(--paper) 0%, #f0ede3 100%); margin: 0; padding: 0; min-height: 100vh; }
 
   .header { background: linear-gradient(135deg, var(--green) 0%, #1a5f47 100%); color: white; padding: 24px 16px; box-shadow: 0 8px 24px rgba(37, 115, 87, 0.15); display: flex; justify-content: space-between; align-items: center; position: relative; }
-  .header h1 { margin: 0; font-size: 32px; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); top: 0px; text-align: center; }
-  .header p { margin: 0; opacity: 0.9; font-size: 14px; position: absolute; left: 50%; transform: translateX(-50%); top: 60px; text-align: center; }
+  .header h1 { margin: 0; font-size: 32px; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); top: 0px; text-align: center; max-width: calc(100% - 160px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header p { margin: 0; opacity: 0.9; font-size: 14px; position: absolute; left: 50%; transform: translateX(-50%); top: 60px; text-align: center; max-width: calc(100% - 160px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   .container {
     display: grid;
@@ -876,11 +876,25 @@ function selectVariant(productIndex, variant) {
 }
 
 function changeQty(cartKey, delta) {
-  const newQty = (cart[cartKey] || 0) + delta;
-  if (newQty <= 0) {
-    delete cart[cartKey];
+  if (delta < 0) {
+    const newQty = (cart[cartKey] || 0) + delta;
+    if (newQty <= 0) {
+      delete cart[cartKey];
+      const [productIndex] = cartKey.split(":");
+      const otherVariant = Object.keys(cart).find(k => k.startsWith(productIndex + ":") && k !== cartKey && cart[k] > 0);
+      if (otherVariant) {
+        const otherQty = cart[otherVariant] - 1;
+        if (otherQty <= 0) {
+          delete cart[otherVariant];
+        } else {
+          cart[otherVariant] = otherQty;
+        }
+      }
+    } else {
+      cart[cartKey] = newQty;
+    }
   } else {
-    cart[cartKey] = newQty;
+    cart[cartKey] = (cart[cartKey] || 0) + delta;
   }
   renderProducts();
   updateCart();
