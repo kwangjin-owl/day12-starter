@@ -714,6 +714,21 @@
   body.force-mobile .qty-display {
     font-size: 12px;
   }
+  body.force-mobile .cart-toggle {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(135deg, var(--orange), #e89051);
+    color: white;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 101;
+  }
   body.force-mobile .cart-panel {
     position: fixed;
     bottom: 0;
@@ -727,6 +742,10 @@
     width: 100%;
     padding: 16px;
     margin: 0;
+    transition: transform 0.3s ease;
+  }
+  body.force-mobile .cart-panel.collapsed {
+    transform: translateY(100%);
   }
   body.force-mobile .container {
     height: auto !important;
@@ -786,6 +805,30 @@
       max-height: none;
       overflow-y: visible;
     }
+    .cart-toggle {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(135deg, var(--orange), #e89051);
+      color: white;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 101;
+      display: none;
+      transition: all 0.2s;
+    }
+    .cart-toggle:hover {
+      opacity: 0.9;
+    }
+    @media (max-width: 768px) {
+      .cart-toggle {
+        display: block;
+      }
+    }
     .cart-panel {
       position: fixed;
       bottom: 0;
@@ -797,6 +840,10 @@
       box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
       overflow-y: auto;
       width: 100%;
+      transition: transform 0.3s ease;
+    }
+    .cart-panel.collapsed {
+      transform: translateY(100%);
     }
 
     .category-tabs {
@@ -924,6 +971,7 @@
 
   <!-- 장바구니 -->
   <div>
+    <button class="cart-toggle" id="cart-toggle" onclick="toggleCart()">🛒 주문 숨기기</button>
     <div class="cart-panel">
       <div class="cart-title">🛒 주문</div>
       <div class="cart-items" id="cart-items">
@@ -1242,6 +1290,13 @@ function showReceipt(buyerName, items, dbId) {
 
 function closeReceipt() {
   document.getElementById("receipt-modal").classList.remove("show");
+}
+
+function toggleCart() {
+  const cartPanel = document.querySelector('.cart-panel');
+  const toggleBtn = document.getElementById('cart-toggle');
+  const isCollapsed = cartPanel.classList.toggle('collapsed');
+  toggleBtn.innerHTML = isCollapsed ? '🛒 주문 보기' : '🛒 주문 숨기기';
 }
 
 function showMessage(text, type) {
