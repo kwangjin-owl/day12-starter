@@ -29,17 +29,17 @@
     grid-template-columns: 1fr 340px;
     gap: 24px;
     padding: 24px;
-    max-height: calc(100vh - 100px);
     max-width: 1000px;
     margin: 0 auto;
     width: 100%;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    min-height: auto;
   }
 
   /* 상품 그리드 */
-  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; overflow-y: auto; max-height: calc(100vh - 140px); padding-right: 10px; }
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; overflow-y: auto; max-height: 60vh; padding-right: 10px; }
 
   .product {
     background: var(--panel);
@@ -434,9 +434,11 @@
   <div>
     <!-- 카테고리 탭 -->
     <div class="category-tabs">
-      <button class="category-tab active" data-category="all" onclick="filterProducts('all')">🔥 전체</button>
-      <button class="category-tab" data-category="basic" onclick="filterProducts('basic')">☕ 기존 메뉴</button>
-      <button class="category-tab" data-category="new" onclick="filterProducts('new')">✨ 신 메뉴</button>
+      <button class="category-tab active" data-category="all" onclick="filterProducts('all')">☕ 전체</button>
+      <button class="category-tab" data-category="americano" onclick="filterProducts('americano')">아메리카노</button>
+      <button class="category-tab" data-category="espresso" onclick="filterProducts('espresso')">에스프레소</button>
+      <button class="category-tab" data-category="latte" onclick="filterProducts('latte')">라떼</button>
+      <button class="category-tab" data-category="other" onclick="filterProducts('other')">기타</button>
     </div>
     <div class="products" id="products"></div>
   </div>
@@ -501,17 +503,17 @@
 
 <script>
 const products = [
-  { name: "아메리카노", price: 3500, icon: "☕" },
-  { name: "아이스 아메리카노", price: 4000, icon: "☕" },
-  { name: "카페라떼", price: 4500, icon: "🥛" },
-  { name: "아이스 라떼", price: 5000, icon: "🥛" },
-  { name: "카푸치노", price: 4500, icon: "🫖" },
-  { name: "헤이즐넛라떼", price: 5000, icon: "🌰" },
-  { name: "초콜릿 라떼", price: 5500, icon: "🥛", isNew: true },
-  { name: "바닐라 라떼", price: 5500, icon: "🥛", isNew: true },
-  { name: "블루 마운틴", price: 6500, icon: "⛰️", isNew: true },
-  { name: "더블 에스프레소", price: 4500, icon: "☕☕", isNew: true },
-  { name: "딸기 요거트", price: 6000, icon: "🍓", isNew: true }
+  { name: "아메리카노", price: 3500, icon: "☕", category: "americano" },
+  { name: "아이스 아메리카노", price: 4000, icon: "☕", category: "americano" },
+  { name: "더블 에스프레소", price: 4500, icon: "☕☕", category: "espresso", isNew: true },
+  { name: "카페라떼", price: 4500, icon: "🥛", category: "latte" },
+  { name: "아이스 라떼", price: 5000, icon: "🥛", category: "latte" },
+  { name: "초콜릿 라떼", price: 5500, icon: "🥛", category: "latte", isNew: true },
+  { name: "바닐라 라떼", price: 5500, icon: "🥛", category: "latte", isNew: true },
+  { name: "헤이즐넛라떼", price: 5000, icon: "🌰", category: "latte" },
+  { name: "카푸치노", price: 4500, icon: "🫖", category: "cappuccino" },
+  { name: "블루 마운틴", price: 6500, icon: "⛰️", category: "specialty", isNew: true },
+  { name: "딸기 요거트", price: 6000, icon: "🍓", category: "beverage", isNew: true }
 ];
 
 let cart = {};
@@ -536,8 +538,10 @@ function renderProducts() {
     .map((p, i) => ({ ...p, originalIndex: i }))
     .filter(p => {
       if (currentCategory === "all") return true;
-      if (currentCategory === "new") return p.isNew;
-      if (currentCategory === "basic") return !p.isNew;
+      if (currentCategory === "americano") return p.category === "americano";
+      if (currentCategory === "espresso") return p.category === "espresso";
+      if (currentCategory === "latte") return p.category === "latte";
+      if (currentCategory === "other") return ["cappuccino", "specialty", "beverage"].includes(p.category);
       return true;
     });
 
