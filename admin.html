@@ -26,8 +26,8 @@
     min-height: 100vh;
   }
   .header { background: linear-gradient(135deg, var(--green) 0%, #1a5f47 100%); color: white; padding: 24px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(37, 115, 87, 0.15); position: relative; }
-  .header h1 { margin: 0; font-size: 32px; font-weight: 700; color: white; position: absolute; left: 50%; transform: translateX(-50%); top: 0px; text-align: center; }
-  .header p { margin: 0; opacity: 0.9; font-size: 14px; color: white; position: absolute; left: 50%; transform: translateX(-50%); top: 60px; text-align: center; }
+  .header h1 { margin: 0; font-size: 32px; font-weight: 700; color: white; position: absolute; left: 50%; transform: translateX(-50%); top: 0px; text-align: center; max-width: calc(100% - 160px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header p { margin: 0; opacity: 0.9; font-size: 14px; color: white; position: absolute; left: 50%; transform: translateX(-50%); top: 60px; text-align: center; max-width: calc(100% - 160px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
   .content-wrapper h1 { font-size: 32px; margin: 0 0 4px; background: linear-gradient(135deg, var(--green) 0%, #1a5f47 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   h1 { font-size: 32px; margin: 0 0 4px; }
@@ -213,8 +213,46 @@
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
+    .header {
+      padding: 14px 10px;
+    }
+    .header h1 {
+      font-size: 18px;
+      max-width: calc(100% - 120px);
+      top: 0px;
+    }
+    .header p {
+      font-size: 10px;
+      max-width: calc(100% - 120px);
+      top: 52px;
+    }
+    .header a {
+      font-size: 11px !important;
+      padding: 6px 10px !important;
+    }
     .stats-grid { grid-template-columns: 1fr; }
     body { padding: 0 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .header {
+      padding: 12px 8px;
+    }
+    .header h1 {
+      font-size: 16px;
+      max-width: calc(100% - 100px);
+      top: 0px;
+    }
+    .header p {
+      font-size: 9px;
+      max-width: calc(100% - 100px);
+      top: 46px;
+      opacity: 0.8;
+    }
+    .header a {
+      font-size: 10px !important;
+      padding: 4px 8px !important;
+    }
   }
 </style>
 </head>

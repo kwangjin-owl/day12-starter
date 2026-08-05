@@ -433,17 +433,21 @@
 
   @media (max-width: 768px) {
     .header {
-      padding: 16px 12px;
+      padding: 14px 10px;
     }
     .header h1 {
-      font-size: 24px;
+      font-size: 18px;
+      max-width: calc(100% - 120px);
+      top: 0px;
     }
     .header p {
-      font-size: 12px;
+      font-size: 10px;
+      max-width: calc(100% - 120px);
+      top: 52px;
     }
-    .header a {
-      font-size: 12px !important;
-      padding: 8px 12px !important;
+    .header a, .header button {
+      font-size: 11px !important;
+      padding: 6px 10px !important;
     }
 
     .container {
@@ -610,11 +614,23 @@
   }
 
   @media (max-width: 480px) {
+    .header {
+      padding: 12px 8px;
+    }
     .header h1 {
-      font-size: 20px;
+      font-size: 16px;
+      max-width: calc(100% - 100px);
+      top: 0px;
     }
     .header p {
-      font-size: 11px;
+      font-size: 9px;
+      max-width: calc(100% - 100px);
+      top: 46px;
+      opacity: 0.8;
+    }
+    .header a, .header button {
+      font-size: 10px !important;
+      padding: 4px 8px !important;
     }
 
     .container {
