@@ -109,7 +109,8 @@
   .product-name { font-size: 13px; font-weight: 700; margin-bottom: 8px; flex-shrink: 0; }
 
   .variant-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 0px; align-content: start; min-height: 50px; }
-  .variant-selector[data-variant-count="1"] .variant-btn { grid-column: 2; }
+  .variant-selector[data-variant-count="1"] { grid-template-columns: 1fr; }
+  .variant-selector[data-variant-count="1"] .variant-btn { grid-column: 1; }
   .product-price { font-size: 14px; font-weight: 700; color: var(--orange); margin-bottom: 0px; display: flex; align-items: flex-start; justify-content: center; min-height: 50px; }
   .variant-btn {
     padding: 6px 4px;
@@ -1041,7 +1042,7 @@ function renderProducts() {
     const qtyControls = `
       <div class="qty-controls">
         <button class="qty-btn ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="if(!this.disabled) changeQty('${cartKey}', -1)">−</button>
-        <div class="qty-display">${isDisabled ? '선택 필요' : qty}</div>
+        <div class="qty-display">${qty}</div>
         <button class="qty-btn ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="if(!this.disabled) changeQty('${cartKey}', 1)">+</button>
       </div>
     `;
