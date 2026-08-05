@@ -1,0 +1,5 @@
+{
+  "name": "day11-form",
+  "private": true,
+  "dependencies": { "@supabase/supabase-js": "^2" }
+}

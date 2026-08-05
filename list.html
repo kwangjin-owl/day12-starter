@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>접수 목록 - Day12</title>
+<style>
+  :root {
+    --ink: #183027;
+    --muted: #64736c;
+    --paper: #f7f5ed;
+    --panel: #fffdf6;
+    --line: #d7dbcf;
+    --green: #257357;
+    --green-soft: #dff0e7;
+    --orange: #dd7b35;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: "Apple SD Gothic Neo", Pretendard, sans-serif; color: var(--ink); background: var(--paper); max-width: 960px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: 0 8px 25px rgba(24,48,39,.06); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 12px; border-bottom: 2px solid var(--line); font-weight: 700; font-size: 14px; color: var(--ink); background: #fafaf8; }
+  td { padding: 12px; border-bottom: 1px solid var(--line); }
+  tbody tr { cursor: pointer; transition: background-color 0.15s; }
+  tbody tr:hover { background-color: var(--green-soft); }
+
+  #list-empty { color: var(--muted); text-align: center; padding: 32px 0; }
+
+  /* 모달 */
+  #modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 100; }
+  #modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+  #modal { background: var(--panel); border-radius: 14px; padding: 28px; max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(24,48,39,.15); }
+  #modal h2 { margin: 0 0 16px; font-size: 18px; }
+  .modal-field { margin: 16px 0; }
+  .modal-label { font-weight: 700; font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+  .modal-value { color: var(--ink); font-size: 14px; line-height: 1.6; }
+  #modal-close { margin-top: 20px; width: 100%; padding: 10px; background: var(--line); border: 0; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--ink); }
+  #modal-close:hover { background: #cad3c7; }
+</style>
+</head>
+<body>
+<h1>접수 목록</h1>
+<p class="lead">지원 신청서를 확인하려면 행을 클릭하세요.</p>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>신청자</th>
+        <th>과목</th>
+        <th>신청 시각</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr id="list-empty"><td colspan="3">로딩 중...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 상세 모달 -->
+<div id="modal-overlay">
+  <div id="modal">
+    <h2 id="modal-title">신청 상세</h2>
+    <div class="modal-field">
+      <div class="modal-label">과목</div>
+      <div class="modal-value" id="modal-subject"></div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">지원 동기</div>
+      <div class="modal-value" id="modal-motivation"></div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">신청 시각</div>
+      <div class="modal-value" id="modal-created-at"></div>
+    </div>
+    <button id="modal-close">닫기</button>
+  </div>
+</div>
+
+<script>
+const subjectMap = {
+  "basic": "컴퓨터 기초",
+  "coding": "코딩 실습",
+  "digital-literacy": "디지털 리터러시"
+};
+
+function formatDate(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleString("ko-KR", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit"
+  });
+}
+
+async function loadList() {
+  try {
+    const res = await fetch("/api/list");
+    if (!res.ok) throw new Error("응답 실패: " + res.status);
+
+    const data = await res.json();
+    const tbody = document.getElementById("tbody");
+
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr id="list-empty"><td colspan="3">아직 신청이 없습니다.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(row => `
+      <tr data-id="${row.id}" data-subject="${row.subject}" data-motivation="${row.motivation || '(없음)'}" data-created-at="${row.created_at}">
+        <td>${row.name}</td>
+        <td>${subjectMap[row.subject] || row.subject}</td>
+        <td>${formatDate(row.created_at)}</td>
+      </tr>
+    `).join("");
+
+    // 행 클릭 이벤트
+    document.querySelectorAll("tbody tr").forEach(row => {
+      row.addEventListener("click", () => {
+        const id = row.dataset.id;
+        const subject = row.dataset.subject;
+        const motivation = row.dataset.motivation;
+        const createdAt = row.dataset.createdAt;
+
+        document.getElementById("modal-subject").textContent = subjectMap[subject] || subject;
+        document.getElementById("modal-motivation").textContent = motivation;
+        document.getElementById("modal-created-at").textContent = formatDate(createdAt);
+        document.getElementById("modal-overlay").classList.add("open");
+      });
+    });
+  } catch (e) {
+    document.getElementById("tbody").innerHTML = `<tr><td colspan="3" style="color: var(--muted);">오류: ${e.message}</td></tr>`;
+  }
+}
+
+// 모달 닫기
+document.getElementById("modal-close").addEventListener("click", () => {
+  document.getElementById("modal-overlay").classList.remove("open");
+});
+
+document.getElementById("modal-overlay").addEventListener("click", (e) => {
+  if (e.target.id === "modal-overlay") {
+    document.getElementById("modal-overlay").classList.remove("open");
+  }
+});
+
+// 페이지 로드시 목록 조회
+loadList();
+</script>
+</body>
+</html>

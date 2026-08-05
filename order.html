@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문하기 - 커피 자판기</title>
+<style>
+  :root {
+    --ink: #183027;
+    --muted: #64736c;
+    --paper: #f7f5ed;
+    --panel: #fffdf6;
+    --line: #d7dbcf;
+    --green: #257357;
+    --green-soft: #dff0e7;
+    --orange: #dd7b35;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: "Apple SD Gothic Neo", Pretendard, sans-serif; color: var(--ink); background: var(--paper); margin: 0; padding: 0; }
+
+  .container { display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 20px; max-height: 100vh; }
+
+  h1 { font-size: 24px; margin: 0 0 20px; }
+
+  /* 상품 그리드 */
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; overflow-y: auto; max-height: calc(100vh - 60px); padding-right: 10px; }
+  .product { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .product:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 115, 87, 0.1); }
+  .product.selected { background: var(--green-soft); border-color: var(--green); }
+  .product-icon { font-size: 36px; margin-bottom: 8px; }
+  .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .product-price { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .product-qty { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* 장바구니 */
+  .cart-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; height: fit-content; display: flex; flex-direction: column; max-height: calc(100vh - 40px); }
+  .cart-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .cart-items { flex: 1; overflow-y: auto; margin-bottom: 12px; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+  .cart-item:last-child { border-bottom: none; }
+  .item-info { flex: 1; }
+  .item-name { font-weight: 700; font-size: 12px; }
+  .item-qty { color: var(--muted); font-size: 11px; }
+  .item-price { font-weight: 700; color: var(--orange); min-width: 50px; text-align: right; }
+  .item-remove { color: #999; cursor: pointer; margin-left: 8px; font-size: 16px; }
+  .item-remove:hover { color: var(--ink); }
+
+  .cart-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 20px 0; }
+
+  .cart-summary { border-top: 2px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+  .summary-row.total { font-size: 16px; font-weight: 700; color: var(--green); }
+
+  .buyer-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .buyer-section label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .buyer-section input { width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; }
+
+  .order-btn { width: 100%; padding: 12px; background: var(--orange); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 12px; }
+  .order-btn:hover { filter: brightness(.95); }
+  .order-btn:disabled { opacity: 0.5; cursor: wait; }
+
+  #message { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 12px; text-align: center; display: none; }
+  #message.success { background: #dff0e7; color: var(--green); display: block; }
+  #message.error { background: #fecaca; color: #991b1b; display: block; }
+
+  @media (max-width: 1000px) {
+    .container { grid-template-columns: 1fr; }
+    .products { max-height: 60vh; }
+    .cart-panel { max-height: fit-content; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 상품 목록 -->
+  <div>
+    <h1>☕ 주문하기</h1>
+    <div class="products" id="products"></div>
+  </div>
+
+  <!-- 장바구니 -->
+  <div>
+    <div class="cart-panel">
+      <div class="cart-title">🛒 주문</div>
+      <div class="cart-items" id="cart-items">
+        <div class="cart-empty">비어있습니다</div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>상품</span>
+          <span id="total-qty">0개</span>
+        </div>
+        <div class="summary-row total">
+          <span>합계</span>
+          <span id="total-price">0원</span>
+        </div>
+      </div>
+
+      <div class="buyer-section">
+        <label for="buyer-name">구매자 이름</label>
+        <input type="text" id="buyer-name" placeholder="이름을 입력하세요" maxlength="40">
+      </div>
+
+      <button class="order-btn" id="order-btn" disabled>주문하기</button>
+      <div id="message"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { name: "아메리카노", price: 3500, icon: "☕" },
+  { name: "카페라떼", price: 4500, icon: "🥛" },
+  { name: "카푸치노", price: 4500, icon: "☕" },
+  { name: "헤이즐넛라떼", price: 5000, icon: "🌰" },
+  { name: "아이스 아메리카노", price: 4000, icon: "🧊" },
+  { name: "아이스 라떼", price: 5000, icon: "🧊" }
+];
+
+let cart = {};
+
+function formatPrice(price) {
+  return price.toLocaleString("ko-KR") + "원";
+}
+
+function renderProducts() {
+  const html = products.map((p, i) => `
+    <div class="product ${cart[i] ? "selected" : ""}" onclick="addToCart(${i})">
+      <div class="product-icon">${p.icon}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-price">${formatPrice(p.price)}</div>
+      ${cart[i] ? `<div class="product-qty">${cart[i]}개</div>` : ""}
+    </div>
+  `).join("");
+  document.getElementById("products").innerHTML = html;
+}
+
+function addToCart(index) {
+  cart[index] = (cart[index] || 0) + 1;
+  renderProducts();
+  updateCart();
+}
+
+function removeFromCart(index) {
+  delete cart[index];
+  renderProducts();
+  updateCart();
+}
+
+function updateCart() {
+  const items = Object.entries(cart).filter(([_, qty]) => qty > 0);
+  const isEmpty = items.length === 0;
+
+  if (isEmpty) {
+    document.getElementById("cart-items").innerHTML = '<div class="cart-empty">비어있습니다</div>';
+  } else {
+    const html = items.map(([i, qty]) => {
+      const p = products[i];
+      const itemTotal = p.price * qty;
+      return `
+        <div class="cart-item">
+          <div class="item-info">
+            <div class="item-name">${p.name}</div>
+            <div class="item-qty">${qty}개 × ${formatPrice(p.price)}</div>
+          </div>
+          <div class="item-price">${formatPrice(itemTotal)}</div>
+          <div class="item-remove" onclick="removeFromCart(${i})">✕</div>
+        </div>
+      `;
+    }).join("");
+    document.getElementById("cart-items").innerHTML = html;
+  }
+
+  // 합계 계산
+  const totalQty = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+  const totalPrice = Object.entries(cart).reduce((sum, [i, qty]) => sum + (products[i].price * qty), 0);
+
+  document.getElementById("total-qty").textContent = totalQty + "개";
+  document.getElementById("total-price").textContent = formatPrice(totalPrice);
+  document.getElementById("order-btn").disabled = isEmpty;
+}
+
+// 주문 제출
+document.getElementById("order-btn").addEventListener("click", async () => {
+  const buyerName = document.getElementById("buyer-name").value.trim();
+  if (!buyerName) {
+    showMessage("이름을 입력하세요", "error");
+    return;
+  }
+
+  const items = Object.entries(cart).filter(([_, qty]) => qty > 0);
+  const button = document.getElementById("order-btn");
+  button.disabled = true;
+
+  try {
+    for (const [i, qty] of items) {
+      const p = products[i];
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          buyer_name: buyerName,
+          product: p.name,
+          quantity: qty,
+          price_per_unit: p.price,
+          total_price: p.price * qty
+        })
+      });
+      if (!res.ok) throw new Error("주문 실패");
+    }
+
+    cart = {};
+    document.getElementById("buyer-name").value = "";
+    renderProducts();
+    updateCart();
+    showMessage("주문이 완료됐습니다! 감사합니다.", "success");
+  } catch (e) {
+    showMessage("오류: " + e.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function showMessage(text, type) {
+  const msg = document.getElementById("message");
+  msg.textContent = text;
+  msg.className = type;
+  setTimeout(() => {
+    msg.className = "";
+  }, 3000);
+}
+
+// 초기 렌더링
+renderProducts();
+</script>
+</body>
+</html>
