@@ -606,7 +606,8 @@ function renderProducts() {
     const variantButtons = variants.map(v => {
       const variantKey = `${p.originalIndex}:${v}`;
       const variantQty = cart[variantKey] || 0;
-      return `<button class="variant-btn ${variantQty > 0 ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v}<br>${formatPrice(p.variants[v])}</button>`;
+      const isSelected = selectedVariant === v;
+      return `<button class="variant-btn ${isSelected ? 'active' : ''}" data-variant="${v}" onclick="selectVariant(${p.originalIndex}, '${v}')">${v}<br>${formatPrice(p.variants[v])}</button>`;
     }).join("");
 
     const variantSelector = variants.length > 0 ? `<div class="variant-selector" data-variant-count="${variants.length}">${variantButtons}</div>` : `<div class="product-price">${formatPrice(p.price)}</div>`;
@@ -655,6 +656,13 @@ function removeFromCart(cartKey) {
   updateCart();
 }
 
+function clearCart() {
+  cart = {};
+  selectedVariants = {};
+  renderProducts();
+  updateCart();
+}
+
 function updateCart() {
   const items = Object.entries(cart).filter(([_, qty]) => qty > 0);
   const isEmpty = items.length === 0;
@@ -662,7 +670,7 @@ function updateCart() {
   if (isEmpty) {
     document.getElementById("cart-items").innerHTML = '<div class="cart-empty">비어있습니다</div>';
   } else {
-    const html = items.map(([cartKey, qty]) => {
+    const itemsHtml = items.map(([cartKey, qty]) => {
       const [productIndex, variant] = cartKey.split(":");
       const p = products[parseInt(productIndex)];
       const price = p.variants[variant];
@@ -680,7 +688,8 @@ function updateCart() {
         </div>
       `;
     }).join("");
-    document.getElementById("cart-items").innerHTML = html;
+    const clearBtn = '<div style="text-align: right; padding: 8px 0; border-bottom: 1px solid #ddd; margin-bottom: 8px;"><button onclick="clearCart()" style="background: none; border: none; color: #dd7b35; cursor: pointer; font-weight: 600; font-size: 12px;">전체삭제</button></div>';
+    document.getElementById("cart-items").innerHTML = clearBtn + itemsHtml;
   }
 
   const totalQty = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
