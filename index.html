@@ -839,8 +839,8 @@
   @media (max-width: 480px) {
     .header {
       padding: 16px;
-      justify-content: space-between;
-      align-items: flex-start;
+      justify-content: center;
+      position: relative;
     }
     .header h1 {
       font-size: 16px;
@@ -863,13 +863,14 @@
     }
     .header > div:first-child {
       text-align: center;
-      flex: 1;
     }
     .header > div:last-child {
+      position: absolute;
+      right: 16px;
+      top: 16px;
       display: flex;
-      flex-direction: column;
       gap: 6px;
-      align-items: flex-end;
+      align-items: flex-start;
     }
     .header button {
       position: static;
