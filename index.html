@@ -839,7 +839,8 @@
   @media (max-width: 480px) {
     .header {
       padding: 16px;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: flex-start;
     }
     .header h1 {
       font-size: 16px;
@@ -864,17 +865,19 @@
       text-align: center;
       flex: 1;
     }
+    .header > div:last-child {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
     .header button {
-      position: absolute;
-      right: 12px;
-      top: 12px;
+      position: static;
       font-size: 10px !important;
       padding: 6px 10px !important;
     }
     .header a {
-      position: absolute;
-      right: 12px;
-      top: 45px;
+      position: static;
       font-size: 10px !important;
       padding: 6px 10px !important;
     }
@@ -1065,7 +1068,7 @@
     <div class="cart-panel">
       <div class="cart-header">
         <div class="cart-title">🛒 주문</div>
-        <button class="cart-toggle" id="cart-toggle" onclick="toggleCart()">숨기기</button>
+        <button class="cart-toggle" id="cart-toggle" onclick="toggleCart()">🛒 주문 숨기기</button>
       </div>
       <div class="cart-items" id="cart-items">
         <div class="cart-empty">비어있습니다</div>
