@@ -850,6 +850,9 @@
       top: auto;
       margin: 0 0 4px 0;
       text-align: center;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
     }
     .header p {
       display: block;
@@ -860,9 +863,13 @@
       max-width: 100%;
       margin: 0;
       text-align: center;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
     }
     .header > div:first-child {
       text-align: center;
+      flex: 1;
     }
     .header > div:last-child {
       position: absolute;
